@@ -2,8 +2,10 @@ services:
   - type: web
     name: jschart-backend
     env: node
+    runtime: node
+    plan: free
     rootDir: server
-    buildCommand: cd . && npm install
+    buildCommand: npm install --production
     startCommand: node server.js
     envVars:
       - key: NODE_ENV
@@ -11,4 +13,9 @@ services:
       - key: CORS_ORIGIN
         value: https://jschart-night.vercel.app
     healthCheckPath: /health
-    autoDeploy: true 
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - server/**
+        - package.json
+        - package-lock.json 
