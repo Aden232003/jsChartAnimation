@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const yahooFinance = require("yahoo-finance2").default;
 const fetch = require("node-fetch");
 global.fetch = fetch;
@@ -7,6 +8,9 @@ global.fetch = fetch;
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the React app build directory
+app.use(express.static(path.join(__dirname, '../dist')));
 
 /**
  * Fetch historical stock data and process it to return only Date and Close price.
@@ -53,7 +57,12 @@ app.post('/api/stock-data', async (req, res) => {
     }
 });
 
-const PORT = 3001;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// Handle React routing, return all requests to React app
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
+const port = process.env.PORT || 3001;
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
 }); 
