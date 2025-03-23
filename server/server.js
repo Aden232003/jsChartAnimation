@@ -6,7 +6,20 @@ const fetch = require("node-fetch");
 global.fetch = fetch;
 
 const app = express();
-app.use(cors());
+
+// Configure CORS to allow requests from your Vercel domain
+const corsOptions = {
+    origin: [
+        'https://jschart-git-master-adens-projects-f5874764.vercel.app',
+        'http://localhost:5173', // Keep localhost for development
+        'https://jschart.vercel.app' // Add this for production URL
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true,
+    optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Suppress Yahoo Finance notices
