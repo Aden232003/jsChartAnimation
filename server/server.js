@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const yahooFinance = require("yahoo-finance2").default;
 const fetch = require("node-fetch");
 global.fetch = fetch;
@@ -10,6 +11,9 @@ app.use(express.json());
 
 // Suppress Yahoo Finance notices
 yahooFinance.suppressNotices(['ripHistorical']);
+
+// Serve static files from the React app build directory
+app.use(express.static(path.join(__dirname, '../dist')));
 
 /**
  * Fetch historical stock data and process it to return only Date and Close price.
@@ -66,6 +70,11 @@ app.post('/api/stock-data', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
+});
+
+// Handle React routing, return all requests to React app
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 const PORT = process.env.PORT || 3001;
