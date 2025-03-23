@@ -85,10 +85,11 @@ const StockChart = ({ data }: StockChartProps) => {
       .attr('d', line);
 
     // Get total length of the path
-    const totalLength = path.node()?.getTotalLength() || 0;
+    const pathNode = path.node();
+    const totalLength = pathNode ? pathNode.getTotalLength() : 0;
 
     // Set up the animation with smoother easing and longer duration
-    path.attr('stroke-dasharray', totalLength + ' ' + totalLength)
+    path.attr('stroke-dasharray', `${totalLength} ${totalLength}`)
       .attr('stroke-dashoffset', totalLength)
       .transition()
       .duration(3500) // Increased duration
