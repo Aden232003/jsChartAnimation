@@ -3,7 +3,7 @@ services:
     name: jschart-backend
     env: node
     rootDir: server
-    buildCommand: npm install
+    buildCommand: cd . && npm install
     startCommand: node server.js
     envVars:
       - key: NODE_ENV
