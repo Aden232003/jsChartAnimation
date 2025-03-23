@@ -2,7 +2,8 @@ import { useState } from 'react'
 import './App.css'
 import StockChart from './components/StockChart'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// Ensure API_URL is properly formatted
+const API_URL = (import.meta.env.VITE_API_URL || 'https://jschart-production.up.railway.app').replace(/\/$/, '');
 
 function App() {
   const [stockData, setStockData] = useState([])
@@ -11,7 +12,7 @@ function App() {
   const [formData, setFormData] = useState({
     ticker: 'META',
     startDate: '2024-01-01',
-    endDate: '2024-03-23',
+    endDate: new Date().toISOString().split('T')[0], // Today's date
     timeframe: '1d'
   })
 
@@ -23,10 +24,31 @@ function App() {
     }))
   }
 
+  const validateDates = () => {
+    const start = new Date(formData.startDate)
+    const end = new Date(formData.endDate)
+    
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      throw new Error("Invalid date format")
+    }
+
+    if (start > end) {
+      throw new Error("Start date cannot be after end date")
+    }
+
+    return true
+  }
+
   const fetchData = async () => {
     try {
       setLoading(true)
       setError('')
+
+      // Validate dates before making the request
+      validateDates()
+
+      console.log('Making request to:', `${API_URL}/api/stock-data`) // Debug log
+      
       const response = await fetch(`${API_URL}/api/stock-data`, {
         method: 'POST',
         headers: {
@@ -36,12 +58,14 @@ function App() {
       })
       
       if (!response.ok) {
-        throw new Error('Failed to fetch stock data')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to fetch stock data')
       }
       
       const data = await response.json()
       setStockData(data)
     } catch (err: unknown) {
+      console.error('Error details:', err) // Debug log
       setError(err instanceof Error ? err.message : 'An unknown error occurred')
     } finally {
       setLoading(false)
@@ -72,6 +96,7 @@ function App() {
             id="startDate"
             name="startDate"
             value={formData.startDate}
+            max={formData.endDate}
             onChange={handleInputChange}
           />
         </div>
@@ -83,6 +108,8 @@ function App() {
             id="endDate"
             name="endDate"
             value={formData.endDate}
+            min={formData.startDate}
+            max={new Date().toISOString().split('T')[0]}
             onChange={handleInputChange}
           />
         </div>
