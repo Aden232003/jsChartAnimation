@@ -8,14 +8,29 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Suppress Yahoo Finance notices
+yahooFinance.suppressNotices(['ripHistorical']);
+
 /**
  * Fetch historical stock data and process it to return only Date and Close price.
  */
 async function fetchStockData(ticker, startDate, endDate, interval) {
     try {
+        // Ensure dates are valid
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            throw new Error("Invalid date format");
+        }
+
+        if (start > end) {
+            throw new Error("Start date cannot be after end date");
+        }
+
         const queryOptions = {
-            period1: new Date(startDate),
-            period2: new Date(endDate),
+            period1: start,
+            period2: end,
             interval: interval
         };
         
@@ -53,7 +68,7 @@ app.post('/api/stock-data', async (req, res) => {
     }
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 }); 

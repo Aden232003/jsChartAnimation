@@ -2,6 +2,8 @@ import { useState } from 'react'
 import './App.css'
 import StockChart from './components/StockChart'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 function App() {
   const [stockData, setStockData] = useState([])
   const [loading, setLoading] = useState(false)
@@ -25,7 +27,7 @@ function App() {
     try {
       setLoading(true)
       setError('')
-      const response = await fetch('http://localhost:3001/api/stock-data', {
+      const response = await fetch(`${API_URL}/api/stock-data`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
