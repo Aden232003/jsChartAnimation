@@ -2,10 +2,12 @@ services:
   - type: web
     name: jschartanimation
     env: node
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --legacy-peer-deps && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: "10000"
     healthCheckPath: /
     autoDeploy: true 
