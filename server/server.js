@@ -10,7 +10,7 @@ const app = express();
 // Configure CORS to allow requests from your Vercel domain
 const corsOptions = {
     origin: [
-        'https://jschart-git-master-adens-projects-f5874764.vercel.app', // Vercel preview URL
+        'https://jschart-sixo-j02g95zex-adens-projects-f5874764.vercel.app', // New Vercel preview URL
         'http://localhost:5173', // Local development
         'https://jschart.vercel.app' // Production URL
     ],
